@@ -1,5 +1,7 @@
 # pretrined model
 model/
+D_latest.pth
+G_latest.pth
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
