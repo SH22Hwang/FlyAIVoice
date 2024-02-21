@@ -1,14 +1,16 @@
 import torch
 from torch import no_grad, LongTensor
-
+import soundfile as sf
+from io import BytesIO
+import base64
 
 from VITSfast.models import SynthesizerTrn
 from VITSfast.text import text_to_sequence
-import VITSfast.commons
-import VITSfast.utils
+from VITSfast import commons
+from VITSfast import utils
 
 class TTS():
-    def __init__(self):
+    def __init__(self, model_dir="../model/G_latest.pth", config_dir="../finetune_speaker.json"):
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
         self.language_marks = {
@@ -20,8 +22,11 @@ class TTS():
             "Mix": "",
         }
 
-        self.model_dir = "./model/G_latest.pth"
-        self.config_dir = "./finetune_speaker.json"
+        # 매개변수
+        # self.model_dir = "../model/G_latest.pth"
+        # self.config_dir = "./finetune_speaker.json"
+        self.model_dir = model_dir
+        self.config_dir = config_dir
 
         self.hps = utils.get_hparams_from_file(self.config_dir)
 
@@ -57,14 +62,26 @@ class TTS():
             audio = self.net_g.infer(
                 x_tst, x_tst_lengths, sid=sid, noise_scale=.667, noise_scale_w=0.8,
                 length_scale=1.0 / speed
-            )[0][0, 0].data.cpu().float().numpy()   
+            )[0][0, 0].data.cpu().float().numpy()
         del stn_tst, x_tst, x_tst_lengths, sid
         return (self.hps.data.sampling_rate, audio)
+        # return audio
 
+    def audio_numpy_to_base64(self,sampling_rate, audio):
+        # Convert the NumPy array to a BytesIO buffer as a WAV file
+        buffer = BytesIO()
+        sf.write(buffer, audio, sampling_rate, format='wav')
+        buffer.seek(0)  # Rewind the buffer to start
 
-    def generate(self, text:str):
+        # Convert the buffer to a base64 string
+        audio_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+        return audio_base64
+
+    def generate(self, text:str) -> str: # base64 반환 
         sampling_rate, audio = self.tts_fn(text, self.speakers[0], "한국어", 1)
-        return sampling_rate, audio
+        audio_base64 = self.audio_numpy_to_base64(sampling_rate, audio)
+        
+        return audio_base64
 
 # 주의: utils, commons 모듈과 필요한 함수 및 변수 정의가 필요합니다.
 # utils.get_hparams_from_file, commons.intersperse 등은 사용자 정의 함수이므로,
