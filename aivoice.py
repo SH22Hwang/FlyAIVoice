@@ -1,6 +1,6 @@
 from typing import Union, Callable
 
-from chat_hummingbird.vectordb.db_manager import DBManager
+from db.db_manager import DBManager
 from chat_hummingbird.generator.generator import Generator
 from chat_hummingbird.summarizer.summarizer import Summarizer
 
