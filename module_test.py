@@ -76,12 +76,22 @@ class TTS():
         # Convert the buffer to a base64 string
         audio_base64 = base64.b64encode(buffer.read()).decode('utf-8')
         return audio_base64
+    
+    def audio_numpy_to_bytes(self,sampling_rate, audio):
+        # Convert the NumPy array to a BytesIO buffer as a WAV file
+        buffer = BytesIO()
+        sf.write(buffer, audio, sampling_rate, format='wav')
+        buffer.seek(0)  # Rewind the buffer to start
+
+        audio_bytes = buffer.getvalue()
+        return audio_bytes
 
     def generate(self, text:str) -> str: # base64 반환 
         sampling_rate, audio = self.tts_fn(text, self.speakers[0], "한국어", 1)
-        audio_base64 = self.audio_numpy_to_base64(sampling_rate, audio)
-        
-        return audio_base64
+        # audio_base64 = self.audio_numpy_to_base64(sampling_rate, audio)
+        audio_bytes = self.audio_numpy_to_bytes(sampling_rate, audio)
+
+        return audio_bytes
 
 # 주의: utils, commons 모듈과 필요한 함수 및 변수 정의가 필요합니다.
 # utils.get_hparams_from_file, commons.intersperse 등은 사용자 정의 함수이므로,
