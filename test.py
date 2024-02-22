@@ -1,3 +1,11 @@
+import sys
+import os
+
+# 현재 파일의 경로를 기준으로 VITSfast 디렉토리의 경로를 추가
+current_dir = os.path.dirname(os.path.abspath(__file__))
+vitsfast_dir = os.path.join(current_dir, 'VITSfast')
+sys.path.append(vitsfast_dir)
+
 from module_test import TTS
 import time
 import base64
@@ -36,6 +44,6 @@ print(f"audio2base64 type: {type(audio2base64)}")
 print(f"base64: {audio2base64[:10]}")
 
 # Example usage
-output_file_path = "output_base64towav.wav"  # Specify the output file path
+output_file_path = "output_vitsmodule.wav"  # Specify the output file path
 
 base64_to_wav(audio2base64, output_file_path)

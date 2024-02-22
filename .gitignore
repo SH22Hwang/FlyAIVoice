@@ -2,6 +2,7 @@
 model/
 D_latest.pth
 G_latest.pth
+*.wav
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
