@@ -1,2 +1,3 @@
-# FlyAIVoice
-SKT Fly AI 4기 팀프로젝트... AI 음성 모델 리포지토리
+<추가로 해줘야할 명령어>
+
+pip install git+https://github.com/openai/whisper.git
